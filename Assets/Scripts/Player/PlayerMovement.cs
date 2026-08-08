@@ -1,89 +1,97 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody))]
-public class PlayerMovement : MonoBehaviour
+namespace Player
 {
-    [Header("References")]
-    [SerializeField] private PlayerConfig config;
-    [SerializeField] private Transform body;
-
-    private Rigidbody rb;
-    private Vector2 moveInput;
-
-    public Vector3 MoveDirection { get; private set; }
-    
-    private void Awake()
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(PlayerStats))]
+    public class PlayerMovement : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody>();
-    }
+        [Header("References")]
+        [SerializeField] private Transform body;
 
-    public void OnMove(InputAction.CallbackContext context)
-    {
-        moveInput = context.ReadValue<Vector2>();
-    }
+        private Rigidbody rb;
+        private PlayerStats stats;
 
-    private void FixedUpdate()
-    {
-        UpdateMovement();
-    }
+        private Vector2 moveInput;
 
-    private void Update()
-    {
-        UpdateRotation();
-    }
+        public Vector3 MoveDirection { get; private set; }
 
-    private void UpdateMovement()
-    {
-        MoveDirection = new Vector3(
-            moveInput.x,
-            0f,
-            moveInput.y
-        ).normalized;
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody>();
+            stats = GetComponent<PlayerStats>();
+        }
 
-        Vector3 targetVelocity = MoveDirection * config.moveSpeed;
+        public void OnMove(InputAction.CallbackContext context)
+        {
+            moveInput = context.ReadValue<Vector2>();
+        }
 
-        Vector3 currentVelocity = new Vector3(
-            rb.linearVelocity.x,
-            0f,
-            rb.linearVelocity.z
-        );
+        private void FixedUpdate()
+        {
+            UpdateMovement();
+        }
 
-        float acceleration = MoveDirection.sqrMagnitude > 0.001f
-            ? config.acceleration
-            : config.deceleration;
+        private void Update()
+        {
+            UpdateRotation();
+        }
 
-        Vector3 newVelocity = Vector3.MoveTowards(
-            currentVelocity,
-            targetVelocity,
-            acceleration * Time.fixedDeltaTime
-        );
+        private void UpdateMovement()
+        {
+            MoveDirection = new Vector3(
+                moveInput.x,
+                0f,
+                moveInput.y
+            ).normalized;
 
-        rb.linearVelocity = new Vector3(
-            newVelocity.x,
-            rb.linearVelocity.y,
-            newVelocity.z
-        );
-    }
+            Vector3 targetVelocity =
+                MoveDirection * stats.MoveSpeed;
 
-    private void UpdateRotation()
-    {
-        if (moveInput.sqrMagnitude < 0.001f)
-            return;
+            Vector3 currentVelocity = new Vector3(
+                rb.linearVelocity.x,
+                0f,
+                rb.linearVelocity.z
+            );
 
-        Vector3 direction = new Vector3(
-            moveInput.x,
-            0f,
-            moveInput.y
-        ).normalized;
+            float acceleration =
+                MoveDirection.sqrMagnitude > 0.001f
+                    ? stats.Acceleration
+                    : stats.Deceleration;
 
-        Quaternion targetBodyRotation = Quaternion.LookRotation(direction);
+            Vector3 newVelocity = Vector3.MoveTowards(
+                currentVelocity,
+                targetVelocity,
+                acceleration * Time.fixedDeltaTime
+            );
 
-        body.localRotation = Quaternion.RotateTowards(
-            body.localRotation,
-            targetBodyRotation,
-            config.rotationSpeed * Time.deltaTime
-        );
+            rb.linearVelocity = new Vector3(
+                newVelocity.x,
+                rb.linearVelocity.y,
+                newVelocity.z
+            );
+        }
+
+        private void UpdateRotation()
+        {
+            if (moveInput.sqrMagnitude < 0.001f)
+                return;
+
+            Vector3 direction = new Vector3(
+                moveInput.x,
+                0f,
+                moveInput.y
+            ).normalized;
+
+            Quaternion targetBodyRotation =
+                Quaternion.LookRotation(direction);
+
+            body.localRotation = Quaternion.RotateTowards(
+                body.localRotation,
+                targetBodyRotation,
+                stats.RotationSpeed * Time.deltaTime
+            );
+        }
     }
 }

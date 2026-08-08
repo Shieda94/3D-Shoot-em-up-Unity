@@ -21,7 +21,7 @@ public class EnemyContactDamage : MonoBehaviour
         if (cooldownTimer > 0f)
             return;
 
-        PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+        Player.PlayerHealth playerHealth = other.GetComponent<Player.PlayerHealth>();
 
         if (playerHealth == null)
             return;

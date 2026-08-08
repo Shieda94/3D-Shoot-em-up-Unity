@@ -1,12 +1,15 @@
+using System;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private CameraConfig config;
-    [SerializeField] private Transform target;
+    [SerializeField] private Player.PlayerSpawner playerSpawner;
 
     private Vector3 velocity;
+    
+    private Transform target;
 
     private void Start()
     {
@@ -16,7 +19,15 @@ public class CameraFollow : MonoBehaviour
     private void LateUpdate()
     {
         if (target == null || config == null)
-            return;
+        {
+            if (playerSpawner == null)
+                return;
+
+            target = playerSpawner.PlayerTransform;
+
+            if (target == null)
+                return;
+        }
 
         Vector3 desiredPosition = target.position + config.offset;
 

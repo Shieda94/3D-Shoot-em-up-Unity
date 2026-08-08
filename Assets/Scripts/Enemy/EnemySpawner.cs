@@ -4,7 +4,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform player;
+    [SerializeField] private Player.PlayerSpawner playerSpawner;
 
     [Header("Spawn Settings")]
     [SerializeField] private float spawnInterval = 2f;
@@ -15,10 +15,18 @@ public class EnemySpawner : MonoBehaviour
 
     private float spawnTimer;
     private int currentEnemies;
+
     public int CurrentEnemies => currentEnemies;
 
     private void Update()
     {
+        // Le Player n'est pas encore prêt.
+        if (playerSpawner == null ||
+            playerSpawner.PlayerTransform == null)
+        {
+            return;
+        }
+
         spawnTimer += Time.deltaTime;
 
         if (spawnTimer >= spawnInterval)
@@ -45,31 +53,49 @@ public class EnemySpawner : MonoBehaviour
             spawnPosition,
             Quaternion.identity
         );
-        EnemyMovement enemyMovement = enemy.GetComponent<EnemyMovement>();
-        if (enemyMovement != null) { enemyMovement.SetTarget(player); }
-        
-        EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-        if (enemyHealth != null) { enemyHealth.OnDeath += HandleEnemyDeath; }
+
+        EnemyMovement enemyMovement =
+            enemy.GetComponent<EnemyMovement>();
+
+        if (enemyMovement != null)
+        {
+            enemyMovement.SetTarget(
+                playerSpawner.PlayerTransform
+            );
+        }
+
+        EnemyHealth enemyHealth =
+            enemy.GetComponent<EnemyHealth>();
+
+        if (enemyHealth != null)
+        {
+            enemyHealth.OnDeath += HandleEnemyDeath;
+        }
 
         currentEnemies++;
-        
     }
 
     private Vector3 GetSpawnPosition()
     {
-        Vector2 randomDirection = Random.insideUnitCircle.normalized;
+        Vector2 randomDirection =
+            Random.insideUnitCircle.normalized;
 
-        Vector3 position = player.position + new Vector3(
-            randomDirection.x,
-            0f,
-            randomDirection.y
-        ) * spawnDistance;
+        Vector3 position =
+            playerSpawner.PlayerTransform.position
+            + new Vector3(
+                randomDirection.x,
+                0f,
+                randomDirection.y
+            ) * spawnDistance;
 
         return position;
     }
 
     private void HandleEnemyDeath()
     {
-        currentEnemies = Mathf.Max(0, currentEnemies - 1);
+        currentEnemies = Mathf.Max(
+            0,
+            currentEnemies - 1
+        );
     }
 }

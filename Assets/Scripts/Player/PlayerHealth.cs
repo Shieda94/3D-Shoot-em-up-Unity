@@ -1,53 +1,62 @@
 using System;
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+namespace Player
 {
-    [Header("References")]
-    [SerializeField] private PlayerConfig config;
-
-    public float CurrentHealth { get; private set; }
-    public float MaxHealth => config.maxHealth;
-
-    public event Action<float> OnHealthChanged;
-    public event Action OnDeath;
-
-    private void Awake()
+    [RequireComponent(typeof(PlayerStats))]
+    public class PlayerHealth : MonoBehaviour
     {
-        CurrentHealth = config.maxHealth;
-    }
+        private PlayerStats stats;
 
-    public void TakeDamage(float damage)
-    {
-        if (damage <= 0f)
-            return;
+        public float CurrentHealth { get; private set; }
+        public float MaxHealth => stats.MaxHealth;
 
-        CurrentHealth = Mathf.Max(0f, CurrentHealth - damage);
+        public event Action<float> OnHealthChanged;
+        public event Action OnDeath;
 
-        OnHealthChanged?.Invoke(CurrentHealth);
-
-        if (CurrentHealth <= 0f)
+        private void Awake()
         {
-            OnDeath?.Invoke();
+            stats = GetComponent<PlayerStats>();
+
+            CurrentHealth = stats.MaxHealth;
         }
-    }
 
-    public void Heal(float amount)
-    {
-        if (amount <= 0f)
-            return;
+        public void TakeDamage(float damage)
+        {
+            if (damage <= 0f)
+                return;
 
-        CurrentHealth = Mathf.Min(
-            config.maxHealth,
-            CurrentHealth + amount
-        );
+            CurrentHealth = Mathf.Max(
+                0f,
+                CurrentHealth - damage
+            );
 
-        OnHealthChanged?.Invoke(CurrentHealth);
-    }
+            OnHealthChanged?.Invoke(CurrentHealth);
 
-    public void RestoreFullHealth()
-    {
-        CurrentHealth = config.maxHealth;
-        OnHealthChanged?.Invoke(CurrentHealth);
+            if (CurrentHealth <= 0f)
+            {
+                OnDeath?.Invoke();
+            }
+        }
+
+        public void Heal(float amount)
+        {
+            if (amount <= 0f)
+                return;
+
+            CurrentHealth = Mathf.Min(
+                stats.MaxHealth,
+                CurrentHealth + amount
+            );
+
+            OnHealthChanged?.Invoke(CurrentHealth);
+        }
+
+        public void RestoreFullHealth()
+        {
+            CurrentHealth = stats.MaxHealth;
+
+            OnHealthChanged?.Invoke(CurrentHealth);
+        }
     }
 }

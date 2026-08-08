@@ -18,4 +18,4 @@ MonoBehaviour:
   rotationSpeed: 720
   maxHealth: 100
   contactDamageCooldown: 0.5
-  pickupRadius: 2
+  pickupRadius: 7
