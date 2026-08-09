@@ -14,16 +14,22 @@ namespace Player
         public event Action<float> OnHealthChanged;
         public event Action OnDeath;
 
+        private bool isDead;
+
         private void Awake()
         {
             stats = GetComponent<PlayerStats>();
+        }
 
+        private void Start()
+        {
             CurrentHealth = stats.MaxHealth;
+            OnHealthChanged?.Invoke(CurrentHealth);
         }
 
         public void TakeDamage(float damage)
         {
-            if (damage <= 0f)
+            if (damage <= 0f || isDead)
                 return;
 
             CurrentHealth = Mathf.Max(
@@ -35,17 +41,26 @@ namespace Player
 
             if (CurrentHealth <= 0f)
             {
-                OnDeath?.Invoke();
+                Die();
             }
+        }
+
+        private void Die()
+        {
+            if (isDead)
+                return;
+
+            isDead = true;
+            OnDeath?.Invoke();
         }
 
         public void Heal(float amount)
         {
-            if (amount <= 0f)
+            if (amount <= 0f || isDead)
                 return;
 
             CurrentHealth = Mathf.Min(
-                stats.MaxHealth,
+                MaxHealth,
                 CurrentHealth + amount
             );
 
@@ -54,8 +69,10 @@ namespace Player
 
         public void RestoreFullHealth()
         {
-            CurrentHealth = stats.MaxHealth;
+            if (isDead)
+                return;
 
+            CurrentHealth = MaxHealth;
             OnHealthChanged?.Invoke(CurrentHealth);
         }
     }

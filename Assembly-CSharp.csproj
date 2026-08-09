@@ -71,11 +71,13 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerProgression.cs" />
     <Compile Include="Assets\ScriptableObjects\Configs\PlayerConfig.cs" />
+    <Compile Include="Assets\Scripts\Core\RunManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerSpawner.cs" />
+    <Compile Include="Assets\Scripts\UI\HUDController.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
+    <Compile Include="Assets\Scripts\UI\GameOverUI.cs" />
     <Compile Include="Assets\Scripts\Pickable\Pickable.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerHealth.cs" />
-    <Compile Include="Assets\Scripts\Core\HUDController.cs" />
     <Compile Include="Assets\Scripts\Core\GameManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\EnemyContactDamage.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerLook.cs" />

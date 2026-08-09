@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Player
 {
@@ -10,14 +11,26 @@ namespace Player
 
         public GameObject PlayerInstance { get; private set; }
         public Transform PlayerTransform { get; private set; }
+        
+        public event Action<GameObject> OnPlayerSpawned;
 
         private void Start()
         {
             SpawnPlayer();
         }
 
-        private void SpawnPlayer()
+        public void SpawnPlayer()
         {
+            if (PlayerInstance != null)
+            {
+                Debug.LogError(
+                    "PlayerSpawner: A player instance already exists.", 
+                    this
+                );
+                
+                return;
+            }
+            
             if (playerPrefab == null)
             {
                 Debug.LogError(
@@ -45,6 +58,14 @@ namespace Player
             );
 
             PlayerTransform = PlayerInstance.transform;
+            
+            OnPlayerSpawned?.Invoke(PlayerInstance);
+        }
+        
+        public void ClearPlayerReference()
+        {
+            PlayerInstance = null;
+            PlayerTransform = null;
         }
     }
 }
