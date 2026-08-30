@@ -14,21 +14,16 @@ namespace Player
         
         public event Action<GameObject> OnPlayerSpawned;
 
-        private void Start()
-        {
-            SpawnPlayer();
-        }
-
-        public void SpawnPlayer()
+        public GameObject SpawnPlayer()
         {
             if (PlayerInstance != null)
             {
-                Debug.LogError(
+                Debug.LogWarning(
                     "PlayerSpawner: A player instance already exists.", 
                     this
                 );
                 
-                return;
+                return PlayerInstance;
             }
             
             if (playerPrefab == null)
@@ -38,7 +33,7 @@ namespace Player
                     this
                 );
 
-                return;
+                return null;
             }
 
             if (spawnPoint == null)
@@ -48,7 +43,7 @@ namespace Player
                     this
                 );
 
-                return;
+                return null;
             }
 
             PlayerInstance = Instantiate(
@@ -58,8 +53,9 @@ namespace Player
             );
 
             PlayerTransform = PlayerInstance.transform;
-            
+
             OnPlayerSpawned?.Invoke(PlayerInstance);
+            return PlayerInstance;
         }
         
         public void ClearPlayerReference()

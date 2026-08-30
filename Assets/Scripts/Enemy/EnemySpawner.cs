@@ -4,7 +4,6 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Player.PlayerSpawner playerSpawner;
 
     [Header("Spawn Settings")]
     [SerializeField] private float spawnInterval = 2f;
@@ -15,14 +14,40 @@ public class EnemySpawner : MonoBehaviour
 
     private float spawnTimer;
     private int currentEnemies;
+    private Transform playerTarget;
+    private bool isSpawning;
 
     public int CurrentEnemies => currentEnemies;
+    public bool IsSpawning => isSpawning;
+
+    public void StartSpawning(GameObject player)
+    {
+        if (player == null)
+        {
+            Debug.LogError("EnemySpawner: Player target is missing.", this);
+            return;
+        }
+
+        if (enemyPrefab == null)
+        {
+            Debug.LogError("EnemySpawner: Enemy prefab is missing.", this);
+            return;
+        }
+
+        playerTarget = player.transform;
+        spawnTimer = 0f;
+        isSpawning = true;
+    }
+
+    public void StopSpawning()
+    {
+        isSpawning = false;
+        playerTarget = null;
+    }
 
     private void Update()
     {
-        // Le Player n'est pas encore prêt.
-        if (playerSpawner == null ||
-            playerSpawner.PlayerTransform == null)
+        if (!isSpawning || playerTarget == null)
         {
             return;
         }
@@ -60,7 +85,7 @@ public class EnemySpawner : MonoBehaviour
         if (enemyMovement != null)
         {
             enemyMovement.SetTarget(
-                playerSpawner.PlayerTransform
+                playerTarget
             );
         }
 
@@ -81,7 +106,7 @@ public class EnemySpawner : MonoBehaviour
             Random.insideUnitCircle.normalized;
 
         Vector3 position =
-            playerSpawner.PlayerTransform.position
+            playerTarget.position
             + new Vector3(
                 randomDirection.x,
                 0f,
