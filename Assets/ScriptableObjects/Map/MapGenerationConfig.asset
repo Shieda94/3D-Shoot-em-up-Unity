@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95018a88fae26024d985a57a9bba1491, type: 3}
+  m_Name: MapGenerationConfig
+  m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
+  mapWidth: 100
+  mapHeight: 100
+  boundaryPadding: 2
+  playerSafeRadius: 3
+  environmentsRules:
+  - {fileID: 11400000, guid: 54862f05eaec41441afaf410cb8cc54c, type: 2}
+  - {fileID: 11400000, guid: 20c6c4708f38a154fbb9f6b7d8ea69bb, type: 2}
+  - {fileID: 11400000, guid: 9313d46590935114b8b5b824313fd7e1, type: 2}
+  attemptsPerObject: 30

@@ -9,6 +9,7 @@ namespace Game
     {
         NotStarted,
         MapReady,
+        DecorationsReady,
         PlayerReady,
         GameReady,
         Failed
@@ -18,15 +19,22 @@ namespace Game
     {
         [Header("Systems")]
         [SerializeField] private MapGenerator mapGenerator;
+        [SerializeField] private EnvironmentGenerator environmentGenerator;
         [SerializeField] private PlayerSpawner playerSpawner;
         [SerializeField] private EnemySpawner enemySpawner;
+
+        [Header("Procedural generation")]
+        [SerializeField] private bool useRandomSeed = true;
+        [SerializeField] private int fixedSeed;
 
         public GameBootstrapPhase CurrentPhase { get; private set; } = GameBootstrapPhase.NotStarted;
         public GameObject CurrentMap => mapGenerator != null ? mapGenerator.CurrentMap : null;
         public GameObject CurrentPlayer => playerSpawner != null ? playerSpawner.PlayerInstance : null;
+        public int CurrentSeed { get; private set; }
 
         public event Action<GameBootstrapPhase> PhaseChanged;
         public event Action<GameObject> MapReady;
+        public event Action<int> DecorationsReady;
         public event Action<GameObject> PlayerReady;
         public event Action GameReady;
 
@@ -46,7 +54,7 @@ namespace Game
                 return;
             }
 
-            if (mapGenerator == null || playerSpawner == null || enemySpawner == null)
+            if (mapGenerator == null || environmentGenerator == null || playerSpawner == null || enemySpawner == null)
             {
                 Fail("GameBootstrapper: One or more system references are missing.");
                 return;
@@ -62,6 +70,17 @@ namespace Game
 
             SetPhase(GameBootstrapPhase.MapReady);
             MapReady?.Invoke(map);
+
+            CurrentSeed = useRandomSeed ? Guid.NewGuid().GetHashCode() : fixedSeed;
+
+            if (!environmentGenerator.GenerateDecorations(map, CurrentSeed))
+            {
+                Fail("GameBootstrapper: Unable to generate map decorations.");
+                return;
+            }
+
+            SetPhase(GameBootstrapPhase.DecorationsReady);
+            DecorationsReady?.Invoke(CurrentSeed);
 
             GameObject player = playerSpawner.SpawnPlayer();
 

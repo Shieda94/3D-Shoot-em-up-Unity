@@ -2085,6 +2085,7 @@ GameObject:
   - component: {fileID: 1948759974}
   - component: {fileID: 1948759976}
   - component: {fileID: 1948759977}
+  - component: {fileID: 1948759978}
   m_Layer: 0
   m_Name: GameRoot
   m_TagString: Untagged
@@ -2132,8 +2133,24 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Game.GameBootstrapper
   mapGenerator: {fileID: 1948759976}
+  environmentGenerator: {fileID: 1948759978}
   playerSpawner: {fileID: 1570621561}
   enemySpawner: {fileID: 642155779}
+  useRandomSeed: 1
+  fixedSeed: 0
+--- !u!114 &1948759978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948759973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43b06d1ec36c411a9416c9c467467ad6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::World.EnvironmentGenerator
+  config: {fileID: 11400000, guid: a2f5f6ae3b8db6f4b847e70f6ebd42a6, type: 2}
 --- !u!4 &1948759975
 Transform:
   m_ObjectHideFlags: 0
